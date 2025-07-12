@@ -68,8 +68,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/auth/github/unbind', [GitHubController::class, 'unbindGitHub'])->name('auth.github.unbind');
 });
 
-// Gist 相关路由
+// Gist 相关路由（注意：具体路由必须在通配符路由之前）
 Route::get('/gists', [App\Http\Controllers\GistController::class, 'index'])->name('gists.index');
+// 将 gists/create 移到这里，在 {gist} 通配符路由之前
+Route::get('/gists/create', [App\Http\Controllers\GistController::class, 'create'])->name('gists.create')->middleware('auth');
 Route::get('/gists/{gist}', [App\Http\Controllers\GistController::class, 'show'])->name('gists.show');
 
 // 标签相关路由
@@ -108,8 +110,7 @@ Route::middleware('auth')->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
-    // Gist 管理路由
-    Route::get('/gists/create', [App\Http\Controllers\GistController::class, 'create'])->name('gists.create');
+    // Gist 管理路由（create 路由已移到上面，避免与 {gist} 冲突）
     Route::post('/gists', [App\Http\Controllers\GistController::class, 'store'])->name('gists.store');
     Route::get('/gists/{gist}/edit', [App\Http\Controllers\GistController::class, 'edit'])->name('gists.edit');
     Route::put('/gists/{gist}', [App\Http\Controllers\GistController::class, 'update'])->name('gists.update');
