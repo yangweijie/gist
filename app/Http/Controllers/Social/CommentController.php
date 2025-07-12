@@ -15,6 +15,9 @@ class CommentController extends Controller
      */
     public function index(Gist $gist, Request $request)
     {
+        $offset = $request->get('offset', 0);
+        $limit = $request->get('limit', 10);
+
         $comments = Comment::where('gist_id', $gist->id)
             ->approved()
             ->rootComments()
@@ -22,12 +25,26 @@ class CommentController extends Controller
                 $query->approved()->with('user')->orderBy('created_at', 'asc');
             }])
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->skip($offset)
+            ->take($limit)
+            ->get();
 
-        if ($request->expectsJson()) {
+        $totalComments = Comment::where('gist_id', $gist->id)
+            ->approved()
+            ->rootComments()
+            ->count();
+
+        $hasMore = ($offset + $limit) < $totalComments;
+
+        if ($request->expectsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+            $html = view('partials.comments', compact('comments', 'gist'))->render();
+
             return response()->json([
                 'success' => true,
-                'comments' => $comments
+                'html' => $html,
+                'count' => $comments->count(),
+                'hasMore' => $hasMore,
+                'total' => $totalComments
             ]);
         }
 

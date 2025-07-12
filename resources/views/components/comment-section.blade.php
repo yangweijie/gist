@@ -12,9 +12,13 @@
                 <form class="comment-form" data-gist-id="{{ $gist->id }}">
                     @csrf
                     <div class="comment-form-header">
-                        <img src="{{ Auth::user()->avatar_url ?? '/images/default-avatar.png' }}"
-                             alt="{{ Auth::user()->name }}"
-                             class="comment-avatar">
+                        <div class="comment-avatar @if(!Auth::user()->avatar_url) {{ \App\Helpers\AvatarHelper::getAvatarClass(Auth::user()->name) }} @endif">
+                            @if(Auth::user()->avatar_url)
+                                <img src="{{ Auth::user()->avatar_url }}" alt="{{ Auth::user()->name }}">
+                            @else
+                                {{ \App\Helpers\AvatarHelper::getInitials(Auth::user()->name) }}
+                            @endif
+                        </div>
                         <span class="comment-author">{{ Auth::user()->name }}</span>
                     </div>
                     <div class="comment-form-body">
@@ -24,14 +28,15 @@
                                   rows="3"
                                   maxlength="1000"
                                   required></textarea>
-                        <div class="comment-form-footer">
-                            <div class="comment-form-info">
-                                <span class="char-count">0/1000</span>
-                            </div>
-                            <div class="comment-form-actions">
-                                <button type="button" class="btn-cancel">取消</button>
-                                <button type="submit" class="btn-submit">发表评论</button>
-                            </div>
+                    </div>
+
+                    <div class="comment-form-footer">
+                        <div class="comment-form-info">
+                            <span class="char-count">0/1000</span>
+                        </div>
+                        <div class="comment-form-actions">
+                            <button type="button" class="btn-cancel">取消</button>
+                            <button type="submit" class="btn-submit">发表评论</button>
                         </div>
                     </div>
                 </form>
