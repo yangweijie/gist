@@ -73,10 +73,9 @@
         <!-- 语言选项 -->
         <div class="px-4 py-2 max-h-64 overflow-y-auto">
             @foreach($languages as $locale => $language)
-                <a href="{{ route('locale.switch', $locale) }}" 
-                   @click="switching = true; open = false"
-                   class="flex items-center py-4 border-b border-gray-100 dark:border-gray-700 last:border-b-0 {{ $currentLocale === $locale ? 'bg-blue-50 dark:bg-blue-900/20' : '' }}"
-                   :class="{ 'pointer-events-none opacity-50': switching }">
+                <a href="{{ route('locale.switch', $locale) }}"
+                   onclick="this.style.pointerEvents='none'; this.style.opacity='0.5';"
+                   class="flex items-center py-4 border-b border-gray-100 dark:border-gray-700 last:border-b-0 {{ $currentLocale === $locale ? 'bg-blue-50 dark:bg-blue-900/20' : '' }}">
                    
                     <!-- 国旗和语言信息 -->
                     <div class="flex items-center flex-1">

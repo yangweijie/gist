@@ -5,7 +5,9 @@
     $languages = $localizationService->getEnabledLocales();
 @endphp
 
-<div class="relative inline-block text-left"
+<div class="relative inline-block text-left language-switcher"
+     data-language-switcher
+     data-dropdown
      x-data="{
          open: false,
          switching: false,
@@ -26,6 +28,7 @@
     <div>
         <button @click="open = !open"
                 type="button"
+                data-dropdown-trigger
                 class="group inline-flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm px-3 py-2 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 transition-all duration-200 ease-in-out transform hover:scale-105"
                 :class="{ 'ring-2 ring-blue-500': open }"
                 id="language-menu-button"
@@ -57,6 +60,7 @@
 
     <div x-show="open"
          x-ref="dropdown"
+         data-dropdown-menu
          x-transition:enter="transition ease-out duration-200"
          x-transition:enter-start="transform opacity-0 scale-95 translate-y-1"
          x-transition:enter-end="transform opacity-100 scale-100 translate-y-0"
@@ -81,11 +85,10 @@
 
             @foreach($languages as $locale => $language)
                 <a href="{{ route('locale.switch', $locale) }}"
-                   @click="switching = true; setTimeout(() => switching = false, 1000); localStorage.setItem('user-selected-language', '{{ $locale }}')"
+                   onclick="this.style.pointerEvents='none'; this.style.opacity='0.5'; localStorage.setItem('user-selected-language', '{{ $locale }}');"
                    class="group flex items-center px-4 py-3 text-sm transition-all duration-200 ease-in-out {{ $currentLocale === $locale ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700' }}"
                    role="menuitem"
-                   tabindex="-1"
-                   :class="{ 'pointer-events-none opacity-50': switching }">
+                   tabindex="-1">
 
                     <!-- 国旗图标 -->
                     <span class="mr-3 text-xl transition-transform duration-200 group-hover:scale-110">{{ $language['flag'] }}</span>
